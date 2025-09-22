@@ -1,0 +1,97 @@
+# Decodificadores personalizados de Wazuh para la API de Logs
+# Archivo: /var/ossec/etc/decoders/api_microservice_decoders.xml
+
+<decoder name="api_microservice_json">
+  <program_name>api_microservice</program_name>
+  <type>json</type>
+</decoder>
+
+<decoder name="api_microservice_base">
+  <parent>api_microservice_json</parent>
+  <type>json</type>
+  <use_own_name>true</use_own_name>
+</decoder>
+
+<!-- Decodificador para eventos de autenticación -->
+<decoder name="api_auth_event">
+  <parent>api_microservice_base</parent>
+  <regex type="json">$.event_type</regex>
+  <order>event_type</order>
+</decoder>
+
+<!-- Decodificador para usuario -->
+<decoder name="api_username">
+  <parent>api_auth_event</parent>
+  <regex type="json">$.username</regex>
+  <order>username</order>
+</decoder>
+
+<!-- Decodificador para IP de origen -->
+<decoder name="api_source_ip">
+  <parent>api_microservice_base</parent>
+  <regex type="json">$.source_ip</regex>
+  <order>srcip</order>
+</decoder>
+
+<!-- Decodificador para status de respuesta -->
+<decoder name="api_status">
+  <parent>api_microservice_base</parent>
+  <regex type="json">$.status</regex>
+  <order>status</order>
+</decoder>
+
+<!-- Decodificador para request ID -->
+<decoder name="api_request_id">
+  <parent>api_microservice_base</parent>
+  <regex type="json">$.request_id</regex>
+  <order>id</order>
+</decoder>
+
+<!-- Decodificador para timestamp -->
+<decoder name="api_timestamp">
+  <parent>api_microservice_base</parent>
+  <regex type="json">$.timestamp</regex>
+  <order>timestamp</order>
+</decoder>
+
+<!-- Decodificador para errores del sistema -->
+<decoder name="api_error_type">
+  <parent>api_microservice_base</parent>
+  <regex type="json">$.error_type</regex>
+  <order>error_type</order>
+</decoder>
+
+<!-- Decodificador para severidad -->
+<decoder name="api_severity">
+  <parent>api_microservice_base</parent>
+  <regex type="json">$.severity</regex>
+  <order>severity</order>
+</decoder>
+
+<!-- Decodificador para User Agent -->
+<decoder name="api_user_agent">
+  <parent>api_microservice_base</parent>
+  <regex type="json">$.user_agent</regex>
+  <order>user_agent</order>
+</decoder>
+
+<!-- Decodificador para método HTTP -->
+<decoder name="api_method">
+  <parent>api_microservice_base</parent>
+  <regex type="json">$.method</regex>
+  <order>method</order>
+</decoder>
+
+<!-- Decodificador para endpoint -->
+<decoder name="api_endpoint">
+  <parent>api_microservice_base</parent>
+  <regex type="json">$.endpoint</regex>
+  <order>url</order>
+</decoder>
+
+<!-- Decodificador para código de estado HTTP -->
+<decoder name="api_status_code">
+  <parent>api_microservice_base</parent>
+  <regex type="json">$.status_code</regex>
+  <order>status_code</order>
+</decoder>

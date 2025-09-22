@@ -1,0 +1,16 @@
+{
+    "name": "api-logs-microservice",
+    "version": "1.0.0",
+    "description": "Microservicio API para generar logs monitoreables con Wazuh",
+    "main": "app.py",
+    "scripts": {
+        "start": "python app.py",
+        "dev": "python app.py",
+        "prod": "gunicorn --bind 0.0.0.0:5000 app:app"
+    },
+    "author": "Agustin",
+    "license": "MIT",
+    "dependencies": {
+        "python": ">=3.8"
+    }
+}

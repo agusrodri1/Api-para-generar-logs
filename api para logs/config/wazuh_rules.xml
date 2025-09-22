@@ -1,0 +1,123 @@
+# Reglas personalizadas de Wazuh para la API de Logs
+# Archivo: /var/ossec/etc/rules/api_microservice_rules.xml
+
+<group name="api_microservice,">
+
+  <!-- Regla base para logs de la API -->
+  <rule id="100001" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="log_type">api_microservice|api_errors|api_security</field>
+    <description>API Microservice log entry</description>
+  </rule>
+
+  <!-- Reglas de autenticación exitosa -->
+  <rule id="100002" level="3">
+    <if_sid>100001</if_sid>
+    <field name="event_type">user_authentication</field>
+    <field name="status">success</field>
+    <description>API: User authentication successful</description>
+    <group>authentication_success</group>
+  </rule>
+
+  <!-- Reglas de autenticación fallida -->
+  <rule id="100003" level="5">
+    <if_sid>100001</if_sid>
+    <field name="event_type">user_authentication</field>
+    <field name="status">failed</field>
+    <description>API: User authentication failed</description>
+    <group>authentication_failed</group>
+  </rule>
+
+  <!-- Reglas de cuenta bloqueada -->
+  <rule id="100004" level="8">
+    <if_sid>100001</if_sid>
+    <field name="event_type">user_authentication</field>
+    <field name="status">blocked</field>
+    <field name="failure_reason">account_locked</field>
+    <description>API: Login attempt on locked account</description>
+    <group>authentication_blocked,pci_dss_10.2.4,pci_dss_10.2.5</group>
+  </rule>
+
+  <!-- Reglas de errores del sistema -->
+  <rule id="100005" level="7">
+    <if_sid>100001</if_sid>
+    <field name="event_type">system_error</field>
+    <description>API: System error detected</description>
+    <group>system_error</group>
+  </rule>
+
+  <!-- Reglas de errores críticos del sistema -->
+  <rule id="100006" level="10">
+    <if_sid>100005</if_sid>
+    <field name="severity">high</field>
+    <description>API: High severity system error</description>
+    <group>system_error,critical</group>
+  </rule>
+
+  <!-- Reglas de warnings del sistema -->
+  <rule id="100007" level="4">
+    <if_sid>100001</if_sid>
+    <field name="event_type">system_warning</field>
+    <description>API: System warning detected</description>
+    <group>system_warning</group>
+  </rule>
+
+  <!-- Reglas de procesamiento de datos -->
+  <rule id="100008" level="3">
+    <if_sid>100001</if_sid>
+    <field name="event_type">data_processing</field>
+    <field name="status">success</field>
+    <description>API: Data processing completed successfully</description>
+    <group>data_processing</group>
+  </rule>
+
+  <!-- Reglas de fallo en procesamiento de datos -->
+  <rule id="100009" level="6">
+    <if_sid>100001</if_sid>
+    <field name="event_type">data_processing</field>
+    <field name="status">failed</field>
+    <description>API: Data processing failed</description>
+    <group>data_processing,error</group>
+  </rule>
+
+  <!-- Reglas de múltiples intentos de login fallidos -->
+  <rule id="100010" level="10" frequency="5" timeframe="300">
+    <if_matched_sid>100003</if_matched_sid>
+    <same_field>username</same_field>
+    <description>API: Multiple authentication failures for same user</description>
+    <group>authentication_failures,multiple_attempts</group>
+  </rule>
+
+  <!-- Reglas de errores de aplicación -->
+  <rule id="100011" level="7">
+    <if_sid>100001</if_sid>
+    <field name="event_type">application_error</field>
+    <description>API: Application error detected</description>
+    <group>application_error</group>
+  </rule>
+
+  <!-- Reglas de health check -->
+  <rule id="100012" level="1">
+    <if_sid>100001</if_sid>
+    <field name="event_type">health_check</field>
+    <description>API: Health check performed</description>
+    <group>health_check</group>
+  </rule>
+
+  <!-- Reglas de inicio de aplicación -->
+  <rule id="100013" level="3">
+    <if_sid>100001</if_sid>
+    <field name="event_type">application_start</field>
+    <description>API: Application started</description>
+    <group>application_lifecycle</group>
+  </rule>
+
+  <!-- Reglas de alta actividad sospechosa -->
+  <rule id="100014" level="8" frequency="100" timeframe="60">
+    <if_matched_sid>100001</if_matched_sid>
+    <same_field>source_ip</same_field>
+    <description>API: High request frequency from single IP</description>
+    <group>suspicious_activity,dos_attempt</group>
+  </rule>
+
+</group>

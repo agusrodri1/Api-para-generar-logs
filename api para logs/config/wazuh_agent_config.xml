@@ -1,0 +1,72 @@
+# Configuración de Wazuh para monitorear API de Logs
+# Archivo: /var/ossec/etc/ossec.conf (sección localfile)
+
+# 1. Monitoreo de logs principales de la API
+<localfile>
+  <log_format>json</log_format>
+  <location>/ruta/a/tu/api/logs/api_all.log</location>
+  <label key="log_type">api_microservice</label>
+  <label key="service">api_logs</label>
+</localfile>
+
+# 2. Monitoreo específico de logs de errores
+<localfile>
+  <log_format>json</log_format>
+  <location>/ruta/a/tu/api/logs/api_errors.log</location>
+  <label key="log_type">api_errors</label>
+  <label key="service">api_logs</label>
+  <label key="severity">high</label>
+</localfile>
+
+# 3. Monitoreo específico de logs de seguridad
+<localfile>
+  <log_format>json</log_format>
+  <location>/ruta/a/tu/api/logs/api_security.log</location>
+  <label key="log_type">api_security</label>
+  <label key="service">api_logs</label>
+  <label key="security">true</label>
+</localfile>
+
+# Configuración completa del agente
+<ossec_config>
+  <client>
+    <server>
+      <address>TU_SERVIDOR_WAZUH</address>
+      <port>1514</port>
+      <protocol>tcp</protocol>
+    </server>
+    <config-profile>generic</config-profile>
+    <notify_time>10</notify_time>
+    <time-reconnect>60</time-reconnect>
+    <auto_restart>yes</auto_restart>
+  </client>
+
+  <localfile>
+    <log_format>json</log_format>
+    <location>/ruta/a/tu/api/logs/api_all.log</location>
+    <label key="log_type">api_microservice</label>
+    <label key="service">api_logs</label>
+  </localfile>
+
+  <localfile>
+    <log_format>json</log_format>
+    <location>/ruta/a/tu/api/logs/api_errors.log</location>
+    <label key="log_type">api_errors</label>
+    <label key="service">api_logs</label>
+    <label key="severity">high</label>
+  </localfile>
+
+  <localfile>
+    <log_format>json</log_format>
+    <location>/ruta/a/tu/api/logs/api_security.log</location>
+    <label key="log_type">api_security</label>
+    <label key="service">api_logs</label>
+    <label key="security">true</label>
+  </localfile>
+
+  <logging>
+    <log_info>yes</log_info>
+    <log_warning>yes</log_warning>
+    <log_error>yes</log_error>
+  </logging>
+</ossec_config>
